@@ -4,6 +4,7 @@ import DeliveryPartnerDAL from "./DeliveryPartnerDAL";
 class DeliveryPartnerService {
   static async _createDeliveryPartner(payload) {
     try {
+      Object.assign(payload, { id: CoreUtil._generateUUID() });
       return await DeliveryPartnerDAL._createDeliveryPartner(payload);
     } catch (error) {
       console.log(error);

@@ -7,8 +7,8 @@ class UserDAL {
     return await this.userModel.create(payload);
   }
 
-  static async _getUser(payload) {
-    return await this.userModel.findAll();
+  static async _findUserByEmail(email) {
+    return await this.userModel.findOne({ where: { email: email } });
   }
 }
 
