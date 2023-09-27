@@ -29,6 +29,8 @@ class UserService {
             expiresIn: 1 * 24 * 60 * 60 * 1000,
           }
         );
+        // const producer = new KafkaProducer();
+        // producer.produceMessage("order-topic", "User has been signed up");
         return { token, email: user.email };
       }
     } catch (error) {
