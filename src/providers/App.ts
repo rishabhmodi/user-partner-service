@@ -21,7 +21,7 @@ class App {
 
   public loadKafka(): void {
     new KafkaProducer();
-    new KafkaConsumer("order-topic");
+    new KafkaConsumer("order-stream");
   }
 }
 

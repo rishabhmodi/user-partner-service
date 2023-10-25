@@ -16,8 +16,10 @@ class KafkaProducer {
     });
   }
 
-  public produceMessage(topic: string, message: string): void {
-    const payloads: ProduceRequest[] = [{ topic, messages: message }];
+  public produceMessage(topic: string, message: any): void {
+    const payloads: ProduceRequest[] = [
+      { topic, messages: JSON.stringify(message) },
+    ];
 
     this.producer.send(payloads, (err, data) => {
       if (err) {

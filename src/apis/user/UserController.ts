@@ -43,6 +43,28 @@ class UserController {
     const data = await UserService._signin(payload, user);
     res.status(200).send(data);
   }
+
+  static async _createOrder(req, res) {
+    const {
+      body: payload,
+      user: { id: userId },
+    } = req;
+
+    if (!payload.restaurant_id) {
+      return res
+        .status(400)
+        .send({ message: "Give the value for restaurant!!" });
+    }
+
+    if (!payload.menu_item_id) {
+      return res
+        .status(400)
+        .send({ message: "Give the value for menu items!!" });
+    }
+
+    const data = await UserService._publishNewOrderToKafka(payload, userId);
+    res.status(200).send(data);
+  }
 }
 
 export default UserController;

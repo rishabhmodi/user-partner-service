@@ -1,4 +1,5 @@
 import CoreUtil from "../../providers/CoreUtil";
+import KafkaProducer from "../../providers/KafkaProducer";
 import Locals from "../../providers/Locals";
 import UserDAL from "./UserDAL";
 import jwt from "jsonwebtoken";
@@ -29,9 +30,7 @@ class UserService {
             expiresIn: 1 * 24 * 60 * 60 * 1000,
           }
         );
-        // const producer = new KafkaProducer();
-        // producer.produceMessage("order-topic", "User has been signed up");
-        return { token, email: user.email };
+        return { token, email: user.email, id: user.id };
       }
     } catch (error) {
       console.log(error);
@@ -40,7 +39,7 @@ class UserService {
 
   static async _signin(formPayload, existingUser) {
     try {
-      const { email } = formPayload;
+      const { email, id } = formPayload;
       let token = jwt.sign(
         {
           id: existingUser.id,
@@ -55,10 +54,22 @@ class UserService {
       return {
         token,
         email,
+        id,
       };
     } catch (error) {
       console.log(error);
     }
+  }
+
+  static async _publishNewOrderToKafka(payload, userId) {
+    const orderPayload = {
+      ...payload,
+      user_id: userId,
+      status: "CREATE_ORDER",
+    };
+    const producer = new KafkaProducer();
+    producer.produceMessage("order-stream", orderPayload);
+    return orderPayload;
   }
 }
 
