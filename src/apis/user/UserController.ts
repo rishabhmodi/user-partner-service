@@ -45,10 +45,11 @@ class UserController {
   }
 
   static async _createOrder(req, res) {
-    const {
-      body: payload,
-      user: { id: userId },
-    } = req;
+    const { body: payload } = req;
+
+    if (!req.user) {
+      return res.status(401).send({ message: "Unauthorized!!" });
+    }
 
     if (!payload.restaurant_id) {
       return res
@@ -62,7 +63,10 @@ class UserController {
         .send({ message: "Give the value for menu items!!" });
     }
 
-    const data = await UserService._publishNewOrderToKafka(payload, userId);
+    const data = await UserService._publishNewOrderToKafka(
+      payload,
+      req.user.id
+    );
     res.status(200).send(data);
   }
 }

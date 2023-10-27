@@ -27,7 +27,7 @@ const DeliveryPartnerModel = (sequelize) => {
       },
       status: {
         type: DataTypes.ENUM("offline", "available", "in_flight_order"),
-        defaultValue: "offline",
+        defaultValue: "available",
       },
     },
     {

@@ -1,4 +1,8 @@
 import { Consumer, KafkaClient, Message } from "kafka-node";
+import DeliveryPartnerService from "../apis/delivery_partner/DeliveryPartnerService";
+import KafkaProducer from "./KafkaProducer";
+
+const producer = new KafkaProducer();
 
 class KafkaConsumer {
   private consumer: Consumer;
@@ -9,10 +13,24 @@ class KafkaConsumer {
       autoCommit: true,
     });
 
-    this.consumer.on("message", (message: Message) => {
+    this.consumer.on("message", async (message: Message) => {
       try {
         const parsedMessage = JSON.parse(message.value as string);
-        console.log(parsedMessage, "***parsed message");
+        const { orderStatus } = parsedMessage;
+        switch (orderStatus) {
+          case "ASSIGN_DELIVERY_PARTNER": {
+            const availablePartner =
+              await DeliveryPartnerService._getAvailableDeliveryPartners();
+            const kafkaPayload = {
+              availableDeliveryPartnerId:
+                availablePartner.length > 0 ? availablePartner[0].id : [],
+              ...parsedMessage,
+              orderStatus: "LIST_OF_AVAILABLE_PARTNERS",
+            };
+            producer.produceMessage("order-stream", kafkaPayload);
+            break;
+          }
+        }
       } catch (err) {
         console.log("error parsing message", err);
       }

@@ -18,6 +18,14 @@ class DeliveryPartnerService {
       console.log(error);
     }
   }
+
+  static async _getAvailableDeliveryPartners() {
+    try {
+      return await DeliveryPartnerDAL._getAvailableDeliveryPartners();
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default DeliveryPartnerService;

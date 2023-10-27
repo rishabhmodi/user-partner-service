@@ -27,7 +27,7 @@ class UserService {
           { id: user.id, email: user.email, name: user.name },
           Locals.config().appSecret,
           {
-            expiresIn: 1 * 24 * 60 * 60 * 1000,
+            expiresIn: 1 * 24 * 60 * 60,
           }
         );
         return { token, email: user.email, id: user.id };
@@ -65,7 +65,7 @@ class UserService {
     const orderPayload = {
       ...payload,
       user_id: userId,
-      status: "CREATE_ORDER",
+      orderStatus: "CREATE_ORDER",
     };
     const producer = new KafkaProducer();
     producer.produceMessage("order-stream", orderPayload);
